@@ -1,45 +1,27 @@
-#ifndef __NETWORK_HPP__
-#define __NETWORK_HPP__
+#ifndef NETWORK_H
+#define NETWORK_H
+#include "Matrix.h"
+#include "Layer.h"
 
-#include "Layer.hpp"
-#include "HiddenLayer.hpp"
-#include "Matrix.hpp"
+using namespace std;
 
-#include <list>
-using std::list;
+class Network{
 
-class Network
-{
-private:
-    //! Nombre de couches cachees
-    int nbHiddenLayer;
-    //! Indicateur permettant de savoir si le reseau est efficace ou non 
-    double fiabilite;
-    Layer inputLayer;
-    Layer outputLayer;
-    list<HiddenLayer> hidden;
+    public:
+            Network(int intputDim, vector<int> hidDim, int outputDim);
+            void setCouche(Layer L);
+            void dispaly_result();
+            void calcul_fiabilite(Matrix TestYset);
+            void train(Matrix TrainXset,Matrix TrainYset, double leaningRate);
+            double test(Matrix TestXset);
 
-public:
-    //! Constructeur
-    Network(int tailleDeHidden, int outputDim);
-    //! Entrainement du reseau
-    void training(Matrix TrainXSet, Matrix TrainYSet, double LearningRate, int TailleLot);
-    //! Mettre a jour une couche
-    void set_layer(Layer L);
-    //! Test du reseau
-    void test(Matrix TestXSet, Matrix TestYSet);
-    //! Affiche la valeur de sortie de chaque neurone
-    void forward_propagation(Matrix TrainXSet);
-    //! Afficher l’erreur au niveau de chaque couche
-    void backward_propagation(Matrix TrainXSet);
-    //! Mise a jour de la valeur des poids (prend en parametre une vitesse d apprentissage)
-    void update_poids(double learningRate);
-    //! Observer la sortie du reseau
-    void display_result();
-    //! Connaitre la fiabilite du reseau
-    void calcul_fiabilite();
-    //! Destructeur
-    ~Network();
-}
+    private: 
+            vector<Layer> couches;
+            Output_layer fcouche;
+            void forward_propagation(Matrix TrainXset);
+            void backward_propagation(Matrix TrainYset);
+            void update_poids(double learningRate);
+            double cross_entropy(Matrix TrainYset);
 
+};
 #endif
