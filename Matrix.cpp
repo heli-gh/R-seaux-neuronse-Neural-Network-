@@ -16,6 +16,14 @@ public:
 
 // Constructeur
 
+
+Matrix::Matrix(){
+    nbRows = 0;
+    nbColumns = 0;
+    weight = NULL;
+}
+
+
 Matrix::Matrix(int nbRowsParam, int nbColumnsParam)
 {
     // Mise à jour du nombre de colonnes et de lignes

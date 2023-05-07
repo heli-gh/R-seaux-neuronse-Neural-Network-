@@ -10,6 +10,12 @@ private:
 
 public:
     //! Constructeur (le parametre fait reference a la methode d initialisation de la matrice)
+    
+    /**
+    @brief Constructeur par défaut de la classe, on a une matrice vide
+    */
+    Matrix();   
+
     /**
     @brief Constructeur de la classe, tous les poids de la matrice sont nuls
     @param nbRowsParam : le nombre de ligne de la matrice
