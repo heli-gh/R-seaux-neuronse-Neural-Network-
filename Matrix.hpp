@@ -4,11 +4,13 @@
 class Matrix
 {
 private:
-    int nbColumns;
-    int nbRows;
-    double **weight;
+    
+    
 
 public:
+    double **weight;
+    int nbColumns;
+    int nbRows;
     //! Constructeur (le parametre fait reference a la methode d initialisation de la matrice)
     
     /**
@@ -49,6 +51,12 @@ public:
     @param A : la matrice que l'on additionne à droite de la matrice sur laquelle on appelle : this + A
     */
     Matrix operator+(const Matrix &A);
+
+    /**
+    @brief Surcharge de l'opérateur de soustraction
+    @param A : la matrice que l'on soustrait à droite de la matrice sur laquelle on appelle : this + A
+    */
+    Matrix operator-(const Matrix& A);
 
     /**
     @brief Surcharge de l'opérateur de multiplication
@@ -152,6 +160,13 @@ public:
     double vecteurDot(const Matrix &A);
 
     /**
+    @brief Renvoyer le produit matriciel d'Hadamard :  this * A
+    @param this : la matrice à gauche du produit matriciel
+    @param A : la matrice à droite du produit matriciel
+    */
+    Matrix multiplicationHadamard(const Matrix &A);
+
+    /**
     @brief Renvoyer la ligne de la plus petite valeur du vecteur colonne
     @param this : le vecteur colonne
     */
@@ -178,6 +193,24 @@ public:
     @param Colonne : un vecteur colonne
     */
     void ajouterColonne(Matrix Colonne);
+
+    /**
+    @brief Renvoie une matrice composée uniquement des colonnes de @param debut à @param fin de la matrice this
+    @param debut : indice de la première colonne à garder
+    @param fin : indice de la dernière colonne à garder
+    */
+    Matrix troncature(int debut,int fin);
+
+    /**
+    @brief Faire la somme des éléments de la matrice
+    */
+    double element_sum();
+
+    /**
+    @brief Applique la fonction @param function sur chaque élément de la matrice
+    @param function : fonction que l'on applique sur chaque élément de la matrice
+    */
+    void apply_function(double(*function)(double));
 };
 
 #endif

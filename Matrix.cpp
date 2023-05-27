@@ -16,13 +16,12 @@ public:
 
 // Constructeur
 
-
-Matrix::Matrix(){
+Matrix::Matrix()
+{
     nbRows = 0;
     nbColumns = 0;
     weight = NULL;
 }
-
 
 Matrix::Matrix(int nbRowsParam, int nbColumnsParam)
 {
@@ -195,6 +194,37 @@ Matrix Matrix::operator+(const Matrix &A)
     return sum;
 }
 
+// Opérateur -
+
+Matrix Matrix::operator-(const Matrix &A)
+{
+    // Si un problème au niveau de la taille des matrices alors on renvoie un message d'erreur
+    try
+    {
+        if (A.nbColumns != nbColumns || A.nbRows != nbRows)
+        {
+            erreurMatrice E(1);
+            throw(E);
+        }
+    }
+    catch (erreurMatrice &tmp)
+    {
+        std::cout << "Problème dans la taille des matrices pour l'addition" << std::endl;
+        exit(1);
+    }
+    // Sinon on peut effectuer l'addition entre les deux matrices
+    Matrix sub = Matrix(nbRows, nbColumns);
+
+    for (int i = 0; i < nbRows; i++)
+    {
+        for (int j = 0; j < nbColumns; j++)
+        {
+            sub.setPoids(i, j, weight[i][j] - A.weight[i][j]);
+        }
+    }
+    return sub;
+}
+
 // Opérateur *
 // Matrice * matrice
 Matrix Matrix::operator*(const Matrix &A)
@@ -331,7 +361,6 @@ Matrix Matrix::vecteurMultVecteurT(const Matrix &A)
         exit(1);
     }
     // Sinon on peut effectuer le produit
-    double tmp;
     Matrix res = Matrix(nbRows, A.nbColumns);
     for (int i = 0; i < nbRows; i++)
     {
@@ -371,6 +400,39 @@ double Matrix::vecteurDot(const Matrix &A)
     return res;
 }
 
+// Produit matriciel d'Hadamard :
+// this : matrice et A : matrice
+Matrix Matrix::multiplicationHadamard(const Matrix &A)
+{
+
+    // Si elles n'ont pas la même taille
+    try
+    {
+        if (nbColumns != A.nbColumns || A.nbRows != nbRows)
+        {
+            erreurMatrice E(1);
+            throw(E);
+        }
+    }
+    catch (erreurMatrice &tmp)
+    {
+        std::cout << "Problème dans la taille des matrices (vecteurs) pour le produit donnant une matrice" << std::endl;
+        exit(1);
+    }
+
+    // Sinon on peut faire le calcul du produit matricielle d'Hadamard
+    Matrix res = Matrix(nbRows, nbColumns);
+    for (int i = 0; i < nbRows; i++)
+    {
+        for (int j = 0; j < nbColumns; j++)
+        {
+            res.setPoids(i, j, weight[i][j] * A.weight[i][j]);
+        }
+    }
+
+    return res;
+}
+
 // Plus grand élément d'un vecteur :
 // this : vecteur colonne
 int Matrix::elementGrand()
@@ -396,6 +458,38 @@ int Matrix::elementGrand()
         if (weight[i][0] < weight[res][0])
             res = i;
     }
+    return res;
+}
+
+// Renvoyer la matrice ne contenant que certaines colonnes de la matrice :
+
+Matrix Matrix::troncature(int debut, int fin)
+{
+    // Si un problème au niveau des indices des colonnes que l'on veut récupérer
+    try
+    {
+        if (debut < 0 || fin > (nbRows - 1) || debut > fin)
+        {
+            erreurMatrice E(1);
+            throw(E);
+        }
+    }
+    catch (erreurMatrice &tmp)
+    {
+        std::cout << "Problème dans les indices début et fin" << std::endl;
+        exit(1);
+    }
+
+    // Sinon on peut effectuer la troncature sur les colonnes
+    Matrix res = Matrix(nbRows, fin - debut + 1);
+    for (int i = 0; i < nbRows; i++)
+    {
+        for (int j = 0; j < res.getnbColumns(); j++)
+        {
+            res.setPoids(i, j, weight[i][j + debut]);
+        }
+    }
+
     return res;
 }
 
@@ -624,26 +718,67 @@ void Matrix::ajouterColonne(Matrix Colonne)
     delete[] tmp;
 }
 
+// Calculer la somme des éléments d'une matrice :
+
+double Matrix::element_sum()
+{
+    double res = 0;
+    for (int i = 0; i < nbRows; i++)
+    {
+        for (int j = 0; j < nbColumns; j++)
+        {
+            // std::cout << res << std::endl;
+            res = res + weight[i][j];
+        }
+    }
+    return res;
+}
+
+// Appliquer une fonction sur chaque élément de la matrice :
+
+void Matrix::apply_function(double (*function)(double))
+{
+    for (int i = 0; i < nbRows; i++)
+    {
+        for (int j = 0; j < nbColumns; j++)
+        {
+            weight[i][j] = (*function)(weight[i][j]);
+        }
+    }
+}
+
+// Test pour la méthode pour appliquer une fonction sur chaque élément de la matrice
+// On définit la fonction
+double fois2(double i)
+{
+    return 2 * i;
+}
+
 int main(int argc, char *argv[], char *envp[])
 {
     Matrix test1 = Matrix(2, 1);
     Matrix test2 = Matrix(1, 2);
     Matrix test3 = Matrix(2, 1);
+    Matrix test4 = Matrix(3, 3);
     test1.creerGaussien(0, 1);
     test2.creerUniforme(0, 1);
     test3.creerUniforme(0, 1);
+    test4.creerUniforme(1, 2);
     test1.affichage();
     std::cout << std::endl;
     test2.affichage();
     std::cout << std::endl;
     test3.affichage();
     std::cout << std::endl;
-
-    Matrix test4 = test1.transposition();
     test4.affichage();
     std::cout << std::endl;
 
-    Matrix test5 = test1 + test3;
-    test5.affichage();
-    std::cout << std::endl;
+    //Matrix test5 = test4.troncature(2, 1);
+    //test5.affichage();
+
+    double (*pf)(double);
+    pf = &fois2;
+    test4.affichage();
+    test4.apply_function(pf);
+    test4.affichage();
 }

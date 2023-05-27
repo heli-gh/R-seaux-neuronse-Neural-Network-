@@ -10,7 +10,7 @@ using std::list;
 class Layer
 {
 private:
-    list<Neurone> neurones;
+    
     //! Nombre de neurones que l'on a en entrée
     int Nbe;
     //! Nombre de neurones que l'on a en sortie
@@ -19,26 +19,11 @@ private:
     //! Vecteur des biais de la couche
     Matrix biais;
     
-    /**
-    @brief Fonction qui permet d'appliquer la fonction d'activation aux éléments d'un vecteur
-    @param colParam : le vecteur auquel on veut appliquer la fonction d'activation
-    
-    */
-    void activation(Matrix<double> col);
-    
     
 
     //! Matrice contenant les poids des aretes reliant cette couche a la suivante
     Matrix arete;
     
-    //! Matrice contenant les delta de chaque poids 
-    Matrix delta;
-    
-    //! Vecteur des entrees
-    Matrix entree;
-    
-    //! Vecteur des sorties
-    Matrix sortie;
     
     //! Vecteur des etiquettes
     Matrix etiq;
@@ -70,62 +55,13 @@ private:
      
         
    
-    /**
-        @brief Getters
-    
-    */
-
-    /**
-         @brief Retourne le vecteur des entrees
-    
-    */  
-    Matrix<double> getEntree();
-    
-    /**
-        @brief Retourne la matrice des poids
-    
-    */
-
-    Matrix<double> getPoids();
-    
-    
-    /**
-        @brief Retourne le vecteur des sorties
-    
-    */
-    
-    Matrix<double> getSortie();
-    
-    /**
-        @brief Retourne la matrice des delta
-    
-    */
-
-    Matrix<double> getDelta() ;
-    
-
-    /**
-         @brief Retourne le vecteur des etiquettes
-    
-    */
-
-    Matrix<double> getEtiq();
-    
-    
-    /**
-        @brief Retourne le vecteur des delta_j
-    
-    */
-
-    Matrix<double> getD();    
-    
     //! Setter
     
     /**
     @brief Permet de donner des valeurs aux élèments de la matrice des poids des neurones de la couche 
     @param eParam : matrice
     */
-    void setPoids(Matrix<double> s);
+    void setPoids(Matrix s);
     
     /**
     
@@ -136,12 +72,6 @@ private:
     void PoidsAleatoires();
     
     
-     /**
-        @brief Permet de donner une valeur au vecteur des entrees de la couche
-        @param eParam : vecteur 
-   
-    */
-    void setEntree(Matrix<double> e);
     
     
     /**
@@ -149,12 +79,22 @@ private:
         @param eParam : vecteur 
     */
     
-    void setEtiquette(Matrix<double> et);
+    void setEtiquette(Matrix et);
     
     
     
 
 public:
+
+    
+    //! Matrice contenant les delta de chaque poids 
+    Matrix delta;
+    
+    //! Vecteur des entrees
+    Matrix entree;
+    
+    //! Vecteur des sorties
+    Matrix sortie;
     
     //! Constructeurs
     
@@ -180,7 +120,7 @@ public:
         @brief Fonction qui permet de remplir le vecteur des sorties
     
     */
-    Matrix<double>Layer::sortie()
+     Matrix Layer::Sortie();
 
    
     /**
@@ -197,6 +137,74 @@ public:
     */
 
     void displayWeight();
+
+
+     /**
+        @brief Permet de donner une valeur au vecteur des entrees de la couche
+        @param eParam : vecteur 
+   
+    */
+    void setEntree(Matrix e);
+
+
+    /**
+    @brief Fonction qui permet d'appliquer la fonction d'activation aux éléments d'un vecteur
+    @param colParam : le vecteur auquel on veut appliquer la fonction d'activation
+    
+    */
+    void activation(Matrix col);
+    
+
+
+    /**
+        @brief Getters
+    
+    */
+
+    /**
+         @brief Retourne le vecteur des entrees
+    
+    */  
+    Matrix getEntree();
+    
+    /**
+        @brief Retourne la matrice des poids
+    
+    */
+
+    Matrix getPoids();
+    
+    
+    /**
+        @brief Retourne le vecteur des sorties
+    
+    */
+    
+    Matrix  getSortie();
+    
+    /**
+        @brief Retourne la matrice des delta
+    
+    */
+
+    Matrix getDelta() ;
+    
+
+    /**
+         @brief Retourne le vecteur des etiquettes
+    
+    */
+
+    Matrix  getEtiq();
+    
+    
+    /**
+        @brief Retourne le vecteur des delta_j
+    
+    */
+
+    Matrix getD();    
+    
    
 
     //! Destructeur

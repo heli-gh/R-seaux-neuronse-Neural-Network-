@@ -22,6 +22,7 @@ Layer::Layer(int Nbe, int Nbs)
 
 
  Matrix Layer::Sortie() {
+	 //! Matrice des poids ce sont les precedentes (de la couche avant)
     
      //! produit matrice vecteur avec W : matrice des poids , I vecteur des entrees, X, vecteur des sortiesX = W * I
 
@@ -38,7 +39,7 @@ Layer::Layer(int Nbe, int Nbs)
 
 void Layer::activation(Matrix col) {
 
-	for (size_t i = 0; i < (col.nbRows); i++) {
+	for (int i = 0; i < (col.nbRows); i++) {
 		
 	//! Applique la fonction d'activation a toutes les neurones du vecteur en entree
      sortie.weight[i][0] = fonctionActivation(col.weight[i][0]);
@@ -99,7 +100,7 @@ void Layer::calculerDelta(Layer L)
 			s=0;
 			for(int k=0;k<arete.nbRows;k++)
 			{
-				Ij=Ij+arete.weight[k][j];
+				Ij=Ij+arete.weight[k][j]*sortie[j][0];
 				s=s+L.d.weight[k][0]*arete.weight[k][j];
 			}
 			dj=dfonctionActivation(Ij)*s;
