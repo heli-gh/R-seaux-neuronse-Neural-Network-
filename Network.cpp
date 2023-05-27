@@ -2,32 +2,34 @@
 
 using namespace std;
 
-Network::Network(const int inputDim,const vector<int> hidDim,const int outputDim)
+Network::Network(const int inputDim,const vector<int> & hidDim,const int outputDim)
 {
     hidDim.push_back(outputDim);
     int h0=inputDim , h1=hidDim[0];
     
-    this->couches(vector());
     Layer* couche = new Layer(h0+1,h1); 
     this->couches.emplace_back(move(*couche)); // std::move()
     for (int i=1;i< hidDim.size();i++ )
     {
         h0=h1;
         h1=hidDim[i];
-        Layer couche(new Layer(h0+1,h1));
-        this->couches.emplace_back(move(couche));
+        Layer* couche(new Layer(h0+1,h1));
+        this->couches.emplace_back(move(*couche));
     }
     OutputLayer* f = new OutputLayer (outputDim,outputDim);
-    this->fcouche = *f;
+    this->fcouche = *f;//loss pointer?
     
 
 }
 Network::~Network(){//& ça marche?
-    delete &fcouche;
-    &fcouche = NULL;
 
-    delete[] couches;
-    &couches =NULL;
+    OutputLayer * f = &fcouche;
+    delete f;
+    f=nullptr;
+    for(int i=0 ; i < this->couches.size() ;++i )
+    {
+        delete this->couches[i];
+    }
 
 }
 void Network::forward_propagation(Matrix& TrainXset)

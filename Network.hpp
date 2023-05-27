@@ -3,6 +3,7 @@
 #include "Matrix.hpp"
 #include "Layer.hpp"
 #include "OutputLayer.hpp"
+#include <vector>
 
 using namespace std;
 
