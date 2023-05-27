@@ -3,13 +3,14 @@
 
 #include "Matrix.hpp"
 #include "Neurone.hpp"
+#include "TrainingFunction.hpp"
 
 #include <list>
 using std::list;
 
 class Layer
 {
-private:
+protected:
     
     //! Nombre de neurones que l'on a en entrée
     int Nbe;
@@ -19,8 +20,6 @@ private:
     //! Vecteur des biais de la couche
     Matrix biais;
     
-    
-
     //! Matrice contenant les poids des aretes reliant cette couche a la suivante
     Matrix arete;
     
@@ -29,31 +28,13 @@ private:
     Matrix etiq;
     
      //! Vecteur des delta_j
-    Matrix d;
+    Matrix delta;
     
     
     
     
     
-    /**
-        @brief Permet de definir la fonction d'activation
-        @param xParam : le reel pour lequel on souhaite calculer la fonction d'activation
 
-    */
-
-    double fonctionActivation(double x);
-    
-    
-     
-    /**
-        @brief Permet de definir la derivee de la fonction d'activation
-        @param xParam : le reel pour lequel on souhaite calculer la derivee de la fonction d'activation
-
-    */
-    
-    double Layer::dfonctionActivation(double x);
-     
-        
    
     //! Setter
     
@@ -95,6 +76,12 @@ public:
     
     //! Vecteur des sorties
     Matrix sortie;
+
+    //! Vecteur des sorties avant calcul avec la fonction d'activation
+    Matrix I;
+
+    //! Classe des fonctions d'activation
+    TrainingFunction Fonction;
     
     //! Constructeurs
     
@@ -110,8 +97,13 @@ public:
         @brief Constructeur de la classe, la couche a Nbe neurones
         @param NbeParam : le nombre de neurones de la couche
         @param NbsParam : le nombre de neurones de la couche suivante
+        @param nareteParam : on initialise avec une matrice de poids arete
+        @param nbiaisParam : on initialise avec une matrice de  biais nbiais (on sait que w_0=-biais pour un neurone)
+        @param netiqParam : on initialise avec une matrice d'etiquette netiq
+        @param ndeltaParam : on initialise avec une matrice de biais nbiais
+
     */
-    Layer(int Nbe, int Nbs);
+    Layer(int ne, int ns, Matrix entree, Matrix narete, Matrix nbiais, Matrix netiq, Matrix ndelta);
     
     
 
@@ -206,7 +198,6 @@ public:
     Matrix getD();    
     
    
-
     //! Destructeur
     ~Layer();
 };

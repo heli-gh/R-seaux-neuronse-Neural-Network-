@@ -12,10 +12,18 @@ Layer::Layer()
       this->Nbs=0; 
 }
 
-Layer::Layer(int Nbe, int Nbs)
+Layer::Layer(int ne, int ns, Matrix nentree, Matrix narete, Matrix nbiais, Matrix netiq, Matrix ndelta)
 {
-      this->Nbe=Nbe;
-      this->Nbs=Nbs;
+	 
+      Nbe=ne;
+      Nbs=ns;
+	  arete=narete;
+	  biais=nbiais;
+	  etiq=netiq;
+	  delta=ndelta;
+	  entree=nentree;
+
+
 }
 
 //! Fonctions
@@ -24,11 +32,19 @@ Layer::Layer(int Nbe, int Nbs)
  Matrix Layer::Sortie() {
 	 //! Matrice des poids ce sont les precedentes (de la couche avant)
     
-     //! produit matrice vecteur avec W : matrice des poids , I vecteur des entrees, X, vecteur des sortiesX = W * I
-
-
- 
+     //! produit matrice vecteur avec W : matrice des poids , I vecteur des entrees, X, vecteur des sorties X = W * E
+	
     sortie = arete * entree;
+
+	//! Cette sortie ne prend pas en compte les w_0 du coup on va les rajouter:
+
+	for(int i=0;i<sortie.getnbRows();i++)
+			sortie.weight[i][0]=sortie.weight[i][0]+biais.weight[i][0];
+
+	//! sauvegarde la valeur du produit matriciel sortie*entree avant transformation avec la fonction d'activation 
+
+	I=sortie;
+
      //! Applique la fonction d'activation a toutes les sorties
 	
     activation(sortie);
@@ -42,7 +58,7 @@ void Layer::activation(Matrix col) {
 	for (int i = 0; i < (col.nbRows); i++) {
 		
 	//! Applique la fonction d'activation a toutes les neurones du vecteur en entree
-     sortie.weight[i][0] = fonctionActivation(col.weight[i][0]);
+     sortie.weight[i][0] = Fonction.sigmoid(col.weight[i][0]);
 	}
 }
 
@@ -68,7 +84,7 @@ Matrix Layer::getEtiq() {
 
 
 Matrix Layer::getD() {
-	return d;
+	return delta;
 }
 
  void Layer::setEntree(Matrix e) {
@@ -93,18 +109,17 @@ void Layer::calculerDelta(Layer L)
 	
 	for (int i=0;i<arete.nbRows;i++)
 	{
-		for(int j=1;j<=arete.nbColumns;j++)
+		for(int j=0;j<=arete.nbColumns;j++)
 		{
 			//Calcul de la somme pondérées des poids pour le neurone de sortis j
 			Ij=L.arete.weight[j][0];
 			s=0;
 			for(int k=0;k<arete.nbRows;k++)
 			{
-				Ij=Ij+arete.weight[k][j]*sortie[j][0];
-				s=s+L.d.weight[k][0]*arete.weight[k][j];
+				s=s+L.delta.weight[k][0]*arete.weight[k][j];
 			}
-			dj=dfonctionActivation(Ij)*s;
-			d.weight[0][j]=dj;
+			dj=Fonction.sigmoid_derivative(I.weight[j][0])*s;
+			delta.weight[0][j]=dj;
 			if (j-1==0)
 				delta.weight[i][j-1]=n*dj * L.biais.weight[j-1][0];
 			else
@@ -134,26 +149,6 @@ void Layer::displayWeight()
 	}
 }
 
-//! Genere et assigne des poids aleatoires à cette couche
-//! Donne un intervalle entre -1/sqrt(numInput) a +1/sqrt(numInput)
-void Layer::PoidsAleatoires() {
-	;
-}
-
-
-double Layer::fonctionActivation(double x) {
-  
-  //Fonction sigmoide standard 
-    return 1 / (1 + std::exp(-x));
-}
-
-
-double Layer::dfonctionActivation(double x) {
-  
-  //Derivee de la fonction d'activation
-	
-    return fonctionActivation(x)*(1-fonctionActivation(x));
-}
 
 Layer::~Layer()
 {
